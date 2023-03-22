@@ -1,0 +1,75 @@
+[gd_scene load_steps=9 format=3 uid="uid://mgp4dnc6f161"]
+
+[ext_resource type="BoxMesh" uid="uid://c0jnfffgxqexm" path="res://Stage.tres" id="1_ckyos"]
+[ext_resource type="Texture2D" uid="uid://y232l3dngtd1" path="res://TestChar_0000.png" id="1_m68iv"]
+[ext_resource type="Script" path="res://CharacterBody3D.gd" id="1_vdcyu"]
+[ext_resource type="Script" path="res://CameraTracker.gd" id="4_0b3c2"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qw34w"]
+shading_mode = 0
+albedo_color = Color(0, 0, 0, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_y72kb"]
+size = Vector3(20, 1, 5)
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_jec4y"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_14nkd"]
+size = Vector3(1, 20, 1)
+
+[node name="World" type="Node3D"]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.9256, 0.378503, 0, -0.378503, 0.9256, 0, 5.82812, 0)
+
+[node name="Stage" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Stage"]
+mesh = ExtResource("1_ckyos")
+surface_material_override/0 = SubResource("StandardMaterial3D_qw34w")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Stage"]
+shape = SubResource("BoxShape3D_y72kb")
+
+[node name="Character" type="CharacterBody3D" parent="."]
+script = ExtResource("1_vdcyu")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Character"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_jec4y")
+
+[node name="Char_Sprite3D" type="Sprite3D" parent="Character"]
+offset = Vector2(0, 140)
+texture_filter = 0
+texture = ExtResource("1_m68iv")
+
+[node name="StateLabel" type="Label3D" parent="Character"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.40532, 0)
+text = "null
+null
+null"
+
+[node name="DebugLabel" type="Label" parent="Character"]
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="CameraTracker" type="Node3D" parent="."]
+script = ExtResource("4_0b3c2")
+
+[node name="Wall" type="StaticBody3D" parent="CameraTracker"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.98188, 0.0528793, -0.0224981)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CameraTracker/Wall"]
+shape = SubResource("BoxShape3D_14nkd")
+
+[node name="Wall2" type="StaticBody3D" parent="CameraTracker"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.0634, 0.0528796, -0.0251863)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CameraTracker/Wall2"]
+shape = SubResource("BoxShape3D_14nkd")
+
+[node name="Camera3D" type="Camera3D" parent="CameraTracker"]
+transform = Transform3D(1, 0, 0, 0, 0.999848, -0.0174524, 0, 0.0174524, 0.999848, 0, 2.00583, 10.2523)
+projection = 1
+size = 5.0
