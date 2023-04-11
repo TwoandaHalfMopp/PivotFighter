@@ -15,10 +15,19 @@ run/main_scene="res://battle.tscn"
 config/features=PackedStringArray("4.0", "Forward Plus")
 config/icon="res://icon.svg"
 
+[autoload]
+
+FrayInputMap="*res://addons/fray/src/input/autoloads/fray_input_map.gd"
+FrayInput="*res://addons/fray/src/input/autoloads/fray_input.gd"
+
 [display]
 
 window/size/viewport_width=1280
 window/size/viewport_height=720
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/fray/plugin.cfg")
 
 [input]
 

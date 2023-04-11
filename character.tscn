@@ -1,0 +1,26 @@
+[gd_scene load_steps=5 format=3 uid="uid://dipgwnkcs871x"]
+
+[ext_resource type="Script" path="res://CharacterBody3D.gd" id="1_l7pmi"]
+[ext_resource type="Texture2D" uid="uid://y232l3dngtd1" path="res://TestChar_0000.png" id="2_onm5d"]
+[ext_resource type="Script" path="res://addons/fray/src/state_mgmt/combat_state_machine.gd" id="3_2n2m1"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_jec4y"]
+
+[node name="Character" type="CharacterBody3D"]
+script = ExtResource("1_l7pmi")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_jec4y")
+
+[node name="Char_Sprite3D" type="Sprite3D" parent="."]
+offset = Vector2(0, 140)
+texture_filter = 0
+texture = ExtResource("2_onm5d")
+
+[node name="DebugLabel" type="Label" parent="."]
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="FrayCombatStateMachine" type="Node" parent="."]
+script = ExtResource("3_2n2m1")

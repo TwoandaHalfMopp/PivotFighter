@@ -1,73 +1,48 @@
 extends CharacterBody3D
-const Speed = 5
-const Gravity = 20
-const JumpForce = 8
 
-var MaxHealth = 150
-var CurrentHealth = MaxHealth
+const SPEED = 5
+const JUMPVEL = 8.5
+const GROUNDCONTROL = 100.0
+const AIRCONTROL = 5.0
+const GRAVITY = 20
+
+const MaxHealth = 150
+var CurrentHealth = 150
+
+const MaxMeter = 300
+const CurrentMeter = 0
+
+@onready var combat_state_machine: FrayCombatStateMachine = $FrayCombatStateMachine
 
 
-var InputLeft = 0
-var InputRight = 0
-var InputUp = 0
-var InputDown = 0
-var InputStartAttackA = 0
-var InputStartAttackB = 0
-var InputStartAttackC = 0
-var InputStartAttackD = 0
-var InputStopAttackA = 0
-var InputStopAttackB = 0
-var InputStopAttackC = 0
-var InputStopAttackD = 0
-
-func _physics_process(delta):
-	updateInputs()
+func _process(delta):
+	FrayInputMap.add_bind_action("left","input_left")
+	FrayInputMap.add_bind_action("right","input_right")
+	FrayInputMap.add_bind_action("up","input_up")
+	FrayInputMap.add_bind_action("down","input_down")
 	
-	if not is_on_floor():
-		velocity.y -= Gravity * delta
-		
-	if Input.is_action_just_pressed("input_up") and is_on_floor():
-		velocity.y = JumpForce
+	FrayInputMap.add_bind_action("attackA","input_attack_a")
+	FrayInputMap.add_bind_action("attackB","input_attack_b")
+	FrayInputMap.add_bind_action("attackC","input_attack_c")
+	FrayInputMap.add_bind_action("attackD","input_attack_d")
 	
-	var InputDir = getInputDir()
-	velocity.x = move_toward(velocity.x, InputDir * Speed,1)
-	move_and_slide()
+	FrayInputMap.add_composite_input("ThrowMacro",FrayCombinationInput.builder()
+	.add_component(FraySimpleInput.from_bind("attackA"))
+	.add_component(FraySimpleInput.from_bind("attackB"))
+	.mode_sync()
+	.build()
+	)
 	
-	if InputStartAttackA:
-		print("Attack A pressed")
+	FrayInputMap.add_composite_input("DashMacro",FrayCombinationInput.builder()
+	.add_component(FraySimpleInput.from_bind("attackC"))
+	.add_component(FraySimpleInput.from_bind("attackD"))
+	.mode_sync()
+	.build()
+	)
 	
-	if InputStartAttackB:
-		print("Attack B pressed")
-	
-	if InputStartAttackC:
-		print("Attack C pressed")
-	
-	if InputStartAttackD:
-		print("Attack D pressed")
-		takeDamage(1)
-
-
-func updateInputs():
-	InputLeft = Input.is_action_pressed("input_left")
-	InputRight = Input.is_action_pressed("input_right")
-	InputUp = Input.is_action_pressed("input_up")
-	InputDown = Input.is_action_pressed("input_down")
-	InputStartAttackA = Input.is_action_just_pressed("input_attack_a")
-	InputStartAttackB = Input.is_action_just_pressed("input_attack_b")
-	InputStartAttackC = Input.is_action_just_pressed("input_attack_c")
-	InputStartAttackD = Input.is_action_just_pressed("input_attack_d")
-	InputStopAttackA = Input.is_action_just_released("input_attack_a")
-	InputStopAttackB = Input.is_action_just_released("input_attack_b")
-	InputStopAttackC = Input.is_action_just_released("input_attack_c")
-	InputStopAttackD = Input.is_action_just_released("input_attack_d")
-
-func getInputDir():
-	match [InputLeft,InputRight]:
-		[false,false]: return 0
-		[true, false]: return -1
-		[false, true]: return 1
-		[true, true]: return 0
-
-func takeDamage(damageAmount):
-	print("Taking " + str(damageAmount) + " damage")
-	CurrentHealth = move_toward(CurrentHealth,0,damageAmount)
+	combat_state_machine.add_situation("on_ground", FrayRootState.builder()
+	.transition_button("groundMovement","attack_A", {input="attackA"})
+	.transition_button("groundMovement","jumpSquat", {input="jump"})
+	.start_at("groundMovement")
+	.build()
+	)
